@@ -261,6 +261,7 @@ state.waterToday = state.waterToday || {};    // {date:count}
 state.trainLog   = state.trainLog || {};      // {date:{dayKey, items:[{name,weight,sets,reps}]}}
 state.measure    = state.measure || {};       // {date:{arm,chest,waist,thigh,bf}}
 state.shopCheck  = state.shopCheck || {};     // {key:true}
+state.videoLinks = state.videoLinks || {};    // {动作名: 固定示范视频URL}
 state.profile    = state.profile || { age:36, sex:'男', height:177, weight:53.1, activity:'moderate', goal:'增肌' };
 state.target     = state.target || null;       // 用户应用后的目标；null=按档案实时自动测算
 
@@ -361,6 +362,7 @@ const TABS=[
   {id:'train', ic:'🏋️', label:'训练'},
   {id:'diet', ic:'🍱', label:'饮食'},
   {id:'routine', ic:'🌙', label:'作息'},
+  {id:'videos', ic:'🎬', label:'示范'},
   {id:'discipline', ic:'🔥', label:'自律'}
 ];
 function renderTabbar(){
@@ -378,6 +380,7 @@ function render(){
   else if(view==='train') renderTrain(v);
   else if(view==='diet') renderDiet(v);
   else if(view==='routine') renderRoutine(v);
+  else if(view==='videos') renderVideos(v);
   else if(view==='discipline') renderDiscipline(v);
   window.scrollTo(0,0);
 }
@@ -535,7 +538,7 @@ function renderTrain(v){
         '<div class="e-meta"><span>组数 <b>'+ex.s+'</b></span><span>次数 <b>'+ex.r+'</b></span><span>组休 <b>'+ex.rest+'</b></span></div>'+
         '<div class="e-note">💡 '+ex.note+'</div>'+
         (function(){ const s=suggestNext(ex.n); return s.first?'<div class="e-sug">🎯 建议：首次按计划做 '+ex.r+' 次，记录后再渐进加重</div>':'<div class="e-sug">🎯 建议下次：'+s.weight+'kg × '+s.reps+'次'+(s.inc?'（比上次 +2.5kg，进入新重量）':'（次数 +1）')+'</div>'; })()+
-        '<a class="demo-link" href="'+(ex.demo||('https://search.bilibili.com/all?keyword='+encodeURIComponent(ex.n+' 标准动作 示范')))+'" target="_blank" rel="noopener">▶ 看标准动作示范</a>';
+        '<a class="demo-link" href="'+videoUrl(ex)+'" target="_blank" rel="noopener">▶ 看标准动作示范</a>';
       dc.appendChild(e);
     });
     const editBtn=el('button','btn ghost','✏️ 调整本日动作');
@@ -1123,3 +1126,60 @@ function init(){
   view='today'; render();
 }
 init();
+
+/* ============================================================
+   动作示范视频库（第6个视图）
+   ============================================================ */
+function videoUrl(ex){
+  const name = ex.n;
+  state.videoLinks = state.videoLinks || {};
+  return state.videoLinks[name] || ex.demo ||
+    ('https://search.bilibili.com/all?keyword='+encodeURIComponent(name+' 标准动作 示范'));
+}
+
+function renderVideos(v){
+  const intro = el('div','card');
+  intro.innerHTML =
+    '<h2>🎬 动作示范视频库</h2>'+
+    '<div class="muted">按训练日归类全部动作。点「▶ 看示范」跳到哔哩哔哩看标准动作教学；'+
+    '想固定某个你喜欢的视频，点「✎ 设固定链接」粘贴地址，之后优先跳你收藏的版本。</div>';
+  v.appendChild(intro);
+
+  const note = el('div','note-box',
+    '<b>怎么用：</b>新手每个动作先看 1~2 遍标准示范，重点看「起始姿势 / 轨迹 / 呼吸 / 离心节奏」。'+
+    '做错动作比不做更伤，尤其卧推、深蹲、硬拉、引体。');
+  v.appendChild(note);
+
+  const order = [1,4,2,5,3,6,0];
+  order.forEach(g=>{
+    const p = WEEK[g];
+    const dc = el('div','card');
+    dc.innerHTML = '<h3 style="margin:0 0 2px">'+p.name+' · '+p.title+'</h3>'+
+      '<div class="muted" style="margin-bottom:8px">'+p.focus+'</div>';
+    p.exercises.forEach(ex=>{
+      const name = ex.n;
+      const custom = state.videoLinks[name];
+      const row = el('div','shop-item video-row');
+      row.innerHTML =
+        '<div style="flex:1;min-width:0">'+
+          '<div style="font-size:13px;font-weight:500">'+name+'</div>'+
+          '<div class="tiny" style="color:var(--text-dim)">'+ex.e+'　'+ex.s+'组 × '+ex.r+'</div>'+
+        '</div>'+
+        '<a class="btn sm" href="'+videoUrl(ex)+'" target="_blank" rel="noopener" style="text-decoration:none;flex:none">▶ 看示范</a>'+
+        '<button class="btn sm ghost" style="flex:none" data-name="'+name+'">'+(custom?'✎ 改链接':'✎ 设链接')+'</button>';
+      dc.appendChild(row);
+    });
+    dc.addEventListener('click',(ev)=>{
+      const btn = ev.target.closest('button[data-name]'); if(!btn) return;
+      const name = btn.dataset.name;
+      const cur = state.videoLinks[name] || '';
+      const url = window.prompt('为「'+name+'」设置固定示范视频链接（留空则恢复默认B站搜索）：\n当前：'+cur, cur);
+      if(url===null) return; // 取消
+      if(url.trim()===''){ delete state.videoLinks[name]; toast('已恢复默认B站搜索'); }
+      else { state.videoLinks[name]=url.trim(); toast('已保存固定链接 ✅'); }
+      saveState(); renderVideos(v);
+    });
+    v.appendChild(dc);
+  });
+}
+
