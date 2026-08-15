@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1a1033" />
+  <title>Mef训计星球 · 增肌自律计划</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="stars"></div>
+  <div id="app">
+    <header id="topbar">
+      <div class="brand">
+        <span class="logo">🪐</span>
+        <div class="brand-text">
+          <h1>Mef训计星球</h1>
+          <p id="brand-sub">增肌 · 自律 · 可视化</p>
+        </div>
+      </div>
+      <button id="bell" class="bell" title="提醒设置">🔔</button>
+    </header>
+    <main id="view"></main>
+    <nav id="tabbar"></nav>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <div id="sheet" class="sheet hidden">
+    <div class="sheet-mask"></div>
+    <div class="sheet-body">
+      <div class="sheet-head">
+        <h3 id="sheet-title">提醒设置</h3>
+        <button id="sheet-close" class="sheet-close">✕</button>
+      </div>
+      <div id="sheet-content"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
