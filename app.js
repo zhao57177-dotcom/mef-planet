@@ -493,6 +493,19 @@ function renderTrain(v){
   wc.appendChild(week);
   v.appendChild(wc);
 
+  // 男性增肌计划定位
+  const tintro = el('div','card');
+  tintro.innerHTML =
+    '<h2>👨 男性增肌训练计划</h2>'+
+    '<div class="muted">本计划按<b>男性</b>目标与标准设计：</div>'+
+    '<div class="tiny" style="margin-top:6px;line-height:1.7">'+
+      '• 4天 Upper/Lower 分化，<b>复合动作为主</b>，渐进超负荷驱动增肌<br>'+
+      '• 营养按男性 BMR 公式（Mifflin 男性）测算，蛋白 <b>2.0–2.6 g/kg</b><br>'+
+      '• 男性增肌期体脂建议维持 <b>12–18%</b>，腹肌明显约 &lt;12%<br>'+
+      '• 目标：增重增肌、塑形、矫正翼状肩胛体态'+
+    '</div>';
+  v.appendChild(tintro);
+
   // 选中日详情
   const p=WEEK[trainSel];
   const dc=el('div','card');
@@ -894,6 +907,19 @@ function renderDiscipline(v){
   pc.appendChild(rb2);
   v.appendChild(pc);
 
+  // 男性增肌参考标准
+  const mstd = el('div','card');
+  mstd.innerHTML =
+    '<h2>👨 男性增肌参考标准</h2>'+
+    '<div class="tiny" style="line-height:1.85">'+
+      '• <b>体脂</b>：男性健康 10–20%，增肌期维持 12–18%，腹肌明显约 &lt;12%<br>'+
+      '• <b>蛋白</b>：1.6–2.2 g/kg/天（你当前 '+prf.weight+'kg → 约 '+Math.round(prf.weight*2.0)+'–'+Math.round(prf.weight*2.2)+'g）<br>'+
+      '• <b>力量进阶</b>：以复合动作 1RM 为准（见下方「💪 力量进步」），每周争取 +2.5–5kg<br>'+
+      '• <b>围度预期</b>：每增重 1kg 约带动臂围 +0.3–0.5cm、胸围同步增长<br>'+
+      '• <b>进度节奏</b>：健康增肌 0.25–0.5kg/周，过快多为脂肪'+
+    '</div>';
+  v.appendChild(mstd);
+
   const sc=el('div','card');
   sc.innerHTML='<h2>🔥 自律数据</h2><div class="stat-grid">'+
     '<div class="stat"><div class="v">'+streak+'</div><div class="k">连续天数</div></div>'+
@@ -1134,16 +1160,28 @@ function videoUrl(ex){
   const name = ex.n;
   state.videoLinks = state.videoLinks || {};
   return state.videoLinks[name] || ex.demo ||
-    ('https://search.bilibili.com/all?keyword='+encodeURIComponent(name+' 标准动作 示范'));
+    ('https://search.bilibili.com/all?keyword='+encodeURIComponent(name+' 男士 标准动作 教学'));
 }
 
 function renderVideos(v){
   const intro = el('div','card');
   intro.innerHTML =
     '<h2>🎬 动作示范视频库</h2>'+
-    '<div class="muted">按训练日归类全部动作。点「▶ 看示范」跳到哔哩哔哩看标准动作教学；'+
+    '<div class="muted">按训练日归类全部动作。点「▶ 看示范」跳到哔哩哔哩看标准动作教学（已默认优先<b>男性健身教学</b>视频）；'+
     '想固定某个你喜欢的视频，点「✎ 设固定链接」粘贴地址，之后优先跳你收藏的版本。</div>';
   v.appendChild(intro);
+
+  // 男性健身 UP 主快捷入口
+  const reco = el('div','card');
+  reco.innerHTML =
+    '<h3 style="margin:0 0 6px">👨 男性健身教学推荐</h3>'+
+    '<div class="muted" style="margin-bottom:9px">本计划为男性增肌设计，以下 UP 主以<b>男性视角</b>做系统教学，点开可看整体训练思路与动作细节（封面即男生示范）。</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:8px">'+
+      '<a class="btn sm" href="https://search.bilibili.com/all?keyword='+encodeURIComponent('帅soserious 增肌教学')+'" target="_blank" rel="noopener" style="text-decoration:none">帅soserious</a>'+
+      '<a class="btn sm" href="https://search.bilibili.com/all?keyword='+encodeURIComponent('叔贵健身 增肌')+'" target="_blank" rel="noopener" style="text-decoration:none">叔贵健身</a>'+
+      '<a class="btn sm" href="https://search.bilibili.com/all?keyword='+encodeURIComponent('Mark健身 力量训练')+'" target="_blank" rel="noopener" style="text-decoration:none">Mark健身</a>'+
+    '</div>';
+  v.appendChild(reco);
 
   const note = el('div','note-box',
     '<b>怎么用：</b>新手每个动作先看 1~2 遍标准示范，重点看「起始姿势 / 轨迹 / 呼吸 / 离心节奏」。'+
